@@ -12,19 +12,20 @@ public class PrestamoDAOImpl implements PrestamoDAO {
 
     @Override
     public void addPrestamo(Prestamo p) {
-        String sql = "INSERT INTO Prestamo (fechaInicio, fechaFin, usuario_id, libro_id) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Prestamo (fechaInicio, fechaFin, usuarioId, libroId) VALUES (?, ?, ?, ?)";
         try (Connection c = ConnectionManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setDate(1, Date.valueOf(p.getFechaInicio()));
-            if (p.getFechaFin() != null)
+            if (p.getFechaFin() != null) {
                 ps.setDate(2, Date.valueOf(p.getFechaFin()));
-            else
+            }else {
                 ps.setNull(2, Types.DATE);
-            ps.setInt(3, p.getUsuarioId());
-            ps.setInt(4, p.getLibroId());
-            ps.executeUpdate();
+                ps.setInt(3, p.getIdUsuario());
+                ps.setInt(4, p.getIdLibro());
 
+                ps.executeUpdate();
+            }
         } catch (SQLException e) {
             System.out.println("Excepción añadiendo préstamo: " + e);
         }
@@ -32,20 +33,22 @@ public class PrestamoDAOImpl implements PrestamoDAO {
 
     @Override
     public void updatePrestamo(Prestamo p) {
-        String sql = "UPDATE Prestamo SET fechaInicio=?, fechaFin=?, usuario_id=?, libro_id=? WHERE id=?";
+        String sql = "UPDATE Prestamo SET fechaInicio=?, fechaFin=?, usuarioId=?, libroId=? WHERE id=?";
         try (Connection c = ConnectionManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
 
             ps.setDate(1, Date.valueOf(p.getFechaInicio()));
-            if (p.getFechaFin() != null)
+            if (p.getFechaFin() != null) {
                 ps.setDate(2, Date.valueOf(p.getFechaFin()));
-            else
+            }else {
                 ps.setNull(2, Types.DATE);
-            ps.setInt(3, p.getUsuarioId());
-            ps.setInt(4, p.getLibroId());
-            ps.setInt(5, p.getId());
-            ps.executeUpdate();
 
+                ps.setInt(3, p.getIdUsuario());
+                ps.setInt(4, p.getIdLibro());
+                ps.setInt(5, p.getId());
+
+                ps.executeUpdate();
+            }
         } catch (SQLException e) {
             System.out.println("Excepción actualizando préstamo: " + e);
         }
@@ -69,6 +72,7 @@ public class PrestamoDAOImpl implements PrestamoDAO {
         Prestamo p = null;
         try (Connection c = ConnectionManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
+
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
@@ -77,9 +81,11 @@ public class PrestamoDAOImpl implements PrestamoDAO {
                 p.setFechaInicio(rs.getDate("fechaInicio").toLocalDate());
                 Date fFin = rs.getDate("fechaFin");
                 if (fFin != null) p.setFechaFin(fFin.toLocalDate());
-                p.setUsuarioId(rs.getInt("usuario_id"));
-                p.setLibroId(rs.getInt("libro_id"));
+
+                p.setIdUsuario(rs.getInt("usuarioId"));
+                p.setIdLibro(rs.getInt("libroId"));
             }
+
         } catch (SQLException e) {
             System.out.println("Excepción obteniendo préstamo: " + e);
         }
@@ -93,19 +99,81 @@ public class PrestamoDAOImpl implements PrestamoDAO {
         try (Connection c = ConnectionManager.getConnection();
              Statement st = c.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
+
             while (rs.next()) {
                 Prestamo p = new Prestamo();
                 p.setId(rs.getInt("id"));
                 p.setFechaInicio(rs.getDate("fechaInicio").toLocalDate());
                 Date fFin = rs.getDate("fechaFin");
                 if (fFin != null) p.setFechaFin(fFin.toLocalDate());
-                p.setUsuarioId(rs.getInt("usuario_id"));
-                p.setLibroId(rs.getInt("libro_id"));
+                p.setIdUsuario(rs.getInt("usuarioId"));
+                p.setIdLibro(rs.getInt("libroId"));
                 lista.add(p);
             }
+
         } catch (SQLException e) {
             System.out.println("Excepción listando préstamos: " + e);
         }
+        return lista;
+    }
+
+    @Override
+    public List<Prestamo> getPrestamoByUsuario(int usuarioId) {
+        String sql = "SELECT * FROM Prestamo WHERE usuarioId=?";
+        List<Prestamo> lista = new ArrayList<>();
+
+        try (Connection c = ConnectionManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setInt(1, usuarioId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Prestamo p = new Prestamo();
+                p.setId(rs.getInt("id"));
+                p.setFechaInicio(rs.getDate("fechaInicio").toLocalDate());
+                Date fFin = rs.getDate("fechaFin");
+                if (fFin != null) p.setFechaFin(fFin.toLocalDate());
+
+                p.setIdUsuario(rs.getInt("usuarioId"));
+                p.setIdLibro(rs.getInt("libroId"));
+                lista.add(p);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Excepción listando préstamos por usuario: " + e);
+        }
+
+        return lista;
+    }
+
+    @Override
+    public List<Prestamo> getPrestamoByLibro(int libroId) {
+        String sql = "SELECT * FROM Prestamo WHERE libroId=?";
+        List<Prestamo> lista = new ArrayList<>();
+
+        try (Connection c = ConnectionManager.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+
+            ps.setInt(1, libroId);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Prestamo p = new Prestamo();
+                p.setId(rs.getInt("id"));
+                p.setFechaInicio(rs.getDate("fechaInicio").toLocalDate());
+                Date fFin = rs.getDate("fechaFin");
+                if (fFin != null) p.setFechaFin(fFin.toLocalDate());
+
+                p.setIdUsuario(rs.getInt("usuarioId"));
+                p.setIdLibro(rs.getInt("libroId"));
+                lista.add(p);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Excepción listando préstamos por libro: " + e);
+        }
+
         return lista;
     }
 }

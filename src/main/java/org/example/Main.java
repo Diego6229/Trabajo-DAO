@@ -1,32 +1,24 @@
+package org.example;
 
-
-import model.*;
 import service.BibliotecaService;
-import dao.*;  // Interfaces del DAO
+import dao.*;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Programa principal de la aplicación de gestión de biblioteca con JDBC.
- */
 public class Main {
     public static void main(String[] args) {
 
-        // ======== Inicialización del servicio ========
-        // Tu compañero creará las implementaciones reales y las inyectará aquí.
         AutorDAO autorDAO = null;
         LibroDAO libroDAO = null;
         UsuarioDAO usuarioDAO = null;
         PrestamoDAO prestamoDAO = null;
         LibroAutorDAO libroAutorDAO = null;
 
-        BibliotecaService service = new BibliotecaService(
-                autorDAO, libroDAO, usuarioDAO, prestamoDAO, libroAutorDAO
-        );
+        BibliotecaService service = new BibliotecaService();
 
-        // ======== Menú principal ========
+        // ------- Menú principal -------
         Scanner sc = new Scanner(System.in);
         int opcion;
 
@@ -56,9 +48,7 @@ public class Main {
         sc.close();
     }
 
-    // =======================================================
-    // ================= MENÚS SECUNDARIOS ===================
-    // =======================================================
+    // ------- Menu secundario --------
 
     private static void menuAutores(BibliotecaService service, Scanner sc) {
         int opcion;
@@ -281,10 +271,7 @@ public class Main {
         } while (opcion != 0);
     }
 
-    // =======================================================
-    // ================= MÉTODOS AUXILIARES ==================
-    // =======================================================
-
+    // ------- Metodos --------
     private static void listar(List<?> lista) {
         if (lista == null || lista.isEmpty()) {
             System.out.println("No hay registros.");
@@ -299,7 +286,7 @@ public class Main {
             sc.next();
         }
         int valor = sc.nextInt();
-        sc.nextLine(); // limpiar buffer
+        sc.nextLine();
         return valor;
     }
 }

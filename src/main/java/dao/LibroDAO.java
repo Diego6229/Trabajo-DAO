@@ -14,5 +14,5 @@ public interface LibroDAO {
 
     List<Libro> listAllLibro();
 
-    List<Libro> getLibroByTitulo(String patron);  // extra útil
+    List<Libro> getLibroByTitulo(String patron);
 }

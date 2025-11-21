@@ -11,7 +11,7 @@ public class LibroAutorDAOImpl implements LibroAutorDAO {
 
     @Override
     public void addLibroAutor(int libroId, int autorId) {
-        String sql = "INSERT INTO Libro_Autor (libro_id, autor_id) VALUES (?, ?)";
+        String sql = "INSERT INTO Libro_Autor (idLibro, idAutor) VALUES (?, ?)";
         try (Connection c = ConnectionManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, libroId);
@@ -24,7 +24,7 @@ public class LibroAutorDAOImpl implements LibroAutorDAO {
 
     @Override
     public void deleteLibroAutor(int libroId, int autorId) {
-        String sql = "DELETE FROM Libro_Autor WHERE libro_id=? AND autor_id=?";
+        String sql = "DELETE FROM Libro_Autor WHERE idLibro=? AND idAutor=?";
         try (Connection c = ConnectionManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, libroId);
@@ -38,13 +38,13 @@ public class LibroAutorDAOImpl implements LibroAutorDAO {
     @Override
     public List<Integer> getAutoresByLibro(int libroId) {
         List<Integer> autores = new ArrayList<>();
-        String sql = "SELECT autor_id FROM Libro_Autor WHERE libro_id=?";
+        String sql = "SELECT idAutor FROM Libro_Autor WHERE idLibro=?";
         try (Connection c = ConnectionManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, libroId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                autores.add(rs.getInt("autor_id"));
+                autores.add(rs.getInt("idAutor"));
             }
         } catch (SQLException e) {
             System.out.println("Excepción obteniendo autores del libro: " + e);
@@ -55,13 +55,13 @@ public class LibroAutorDAOImpl implements LibroAutorDAO {
     @Override
     public List<Integer> getLibrosByAutor(int autorId) {
         List<Integer> libros = new ArrayList<>();
-        String sql = "SELECT libro_id FROM Libro_Autor WHERE autor_id=?";
+        String sql = "SELECT idLibro FROM Libro_Autor WHERE idAutor=?";
         try (Connection c = ConnectionManager.getConnection();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setInt(1, autorId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                libros.add(rs.getInt("libro_id"));
+                libros.add(rs.getInt("idLibro"));
             }
         } catch (SQLException e) {
             System.out.println("Excepción obteniendo libros del autor: " + e);
